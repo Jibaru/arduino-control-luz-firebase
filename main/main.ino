@@ -12,6 +12,10 @@ IotHome iotHome = IotHome();
 void setup() {
   Serial.begin(9600);
 
+  pinMode(16, OUTPUT);
+  pinMode(12, OUTPUT);
+  pinMode(14, OUTPUT);
+
   // Inicializando pines
   iotHome.init();
 
@@ -44,62 +48,47 @@ void setup() {
 
 }
 
-void getBooleanDataAndTry(const String& path, void (*callback)(bool data)) {
-  if (Firebase.getBool(firebaseData, path)) {
-    if (firebaseData.dataType() == "boolean") {
-      callback(firebaseData.boolData());
-    }
-  } else {
-    Serial.println(firebaseData.errorReason());
-  }
-}
-
 void loop() {
 
-  if (Firebase.getInt(firebaseData, "/test/led")) {
+  if (Firebase.getInt(firebaseData, "/focos/foco1/rojo")) {
 
     if (firebaseData.dataType() == "int") {
-      Serial.println(firebaseData.intData());
+      Serial.print("Rojo:");
+      int valor = firebaseData.intData();
+      Serial.println(valor);
+      iotHome.setValue(14, valor);
     }
 
   } else {
     Serial.println(firebaseData.errorReason());
   }
   delay(1000);
+  if (Firebase.getInt(firebaseData, "/focos/foco1/verde")) {
 
-  // Envio datos
-  if (Firebase.setBool(firebaseData, "led1", true)) {
-    Serial.println("Enviado");
+    if (firebaseData.dataType() == "int") {
+      Serial.print("Verde:");
+      int valor = firebaseData.intData();
+      Serial.println(valor);
+      iotHome.setValue(16, valor);
+    }
+
   } else {
     Serial.println(firebaseData.errorReason());
   }
   delay(1000);
+  if (Firebase.getInt(firebaseData, "/focos/foco1/amarillo")) {
 
-
-  if (Firebase.getBool(firebaseData, "led2")) {
-
-    if (firebaseData.dataType() == "boolean") {
-
-      if (!firebaseData.boolData()) {
-        Serial.println("Apaga pin 2");
-        iotHome.tryOn(PIN_2);
-      } else {
-        Serial.println("Enciende pin 2");
-        iotHome.tryOff(PIN_2);
-      }
+    if (firebaseData.dataType() == "int") {
+      Serial.print("Azul:");
+      int valor = firebaseData.intData();
+      Serial.println(valor);
+      iotHome.setValue(12, valor);
     }
+
   } else {
     Serial.println(firebaseData.errorReason());
   }
   delay(1000);
+  Serial.println("---------------------------------------");
 
-  getBooleanDataAndTry("led1", [](bool data)-> void {
-    if (!data) {
-      Serial.println("Apaga pin 2");
-      iotHome.tryOn(PIN_2);
-    } else {
-      Serial.println("Enciende pin 2");
-      iotHome.tryOff(PIN_2);
-    }
-  });
 }

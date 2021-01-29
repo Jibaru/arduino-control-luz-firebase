@@ -6,11 +6,15 @@
 #define PIN_5 5
 #define PIN_6 6
 #define PIN_7 7
+#define PIN_8 8
+#define PIN_9 9
+#define PIN_10 10
+#define PIN_11 11
+#define PIN_12 12
 
 class IotHome {
 public:
 	IotHome();
 	void init();
-	void tryOn(int pin);
-	void tryOff(int pin);
+	void setValue(int pin, int value);
 };
